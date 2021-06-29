@@ -1,14 +1,13 @@
 package jpabook.shop.domain;
 
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
 @Getter
 @Table(name = "members")
 @Entity
@@ -26,4 +25,16 @@ public class Member {
 
 	@OneToMany(mappedBy = "member")
 	private List<Order> orders = new ArrayList<>();
+
+	protected Member() {}
+
+	@Builder
+	public Member(Long id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+
+	public void changeName(String name) {
+		this.name = name;
+	}
 }
