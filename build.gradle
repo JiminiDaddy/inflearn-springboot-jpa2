@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version('2.4.5')
+    id 'io.spring.dependency-management' version('1.0.11.RELEASE')
 }
 
 group 'com.chpark.study'
@@ -12,4 +14,9 @@ repositories {
 }
 
 dependencies {
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+    implementation group: 'org.projectlombok', name: 'lombok'
+    annotationProcessor('org.projectlombok:lombok:1.18.0')
+    
+    implementation group: 'com.h2database', name: 'h2'
 }
