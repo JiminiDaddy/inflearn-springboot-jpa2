@@ -1,11 +1,10 @@
 package jpabook.shop.domain;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 
-@Setter
 @Getter
 @Table(name = "order_item")
 @Entity
@@ -27,7 +26,21 @@ public class OrderItem {
 
 	private int count;
 
+	@Builder
+	public OrderItem(Item item, int orderPrice, int count) {
+		this.item = item;
+		this.orderPrice = orderPrice;
+		this.count = count;
+	}
+
 	public void setOrder(Order order) {
 		this.order = order;
+	}
+
+	public static OrderItem createOrderItem(Item item, int orderPrice, int count) {
+		return OrderItem.builder()
+			.item(item)
+			.orderPrice(orderPrice)
+			.count(count).build();
 	}
 }

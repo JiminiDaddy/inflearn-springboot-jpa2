@@ -14,4 +14,8 @@ public class Album extends Item{
 	private String artist;
 
 	private String etc;
+
+	public Album(String name, int price, int stockQuantity) {
+		super(name, price, stockQuantity);
+	}
 }
