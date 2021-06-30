@@ -1,7 +1,9 @@
 package jpabook.shop.domain;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "orders")
 @Entity
