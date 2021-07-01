@@ -49,5 +49,9 @@ public class OrderService {
 			.collect(Collectors.toList());
 	}
 
-
+	public List<OrderResponseDto> findAllV3() {
+		return orderRepository.findAllWithItem().stream()
+			.map(order -> new OrderResponseDto(order))
+			.collect(Collectors.toList());
+	}
 }

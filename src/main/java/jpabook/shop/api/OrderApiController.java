@@ -17,8 +17,15 @@ public class OrderApiController {
 	}
 
 	@GetMapping("/api/v2/orders")
-	public ResultCode<OrderResponseDto> findOrdersV1() {
+	public ResultCode<OrderResponseDto> findOrdersV2() {
 		List<OrderResponseDto> orderResponseDtos =  this.orderService.findAllV2();
+		ResultCode<OrderResponseDto> result = new ResultCode<>(orderResponseDtos, orderResponseDtos.size());
+		return result;
+	}
+
+	@GetMapping("/api/v3/orders")
+	public ResultCode<OrderResponseDto> findOrdersV3() {
+		List<OrderResponseDto> orderResponseDtos = this.orderService.findAllV3();
 		ResultCode<OrderResponseDto> result = new ResultCode<>(orderResponseDtos, orderResponseDtos.size());
 		return result;
 	}
