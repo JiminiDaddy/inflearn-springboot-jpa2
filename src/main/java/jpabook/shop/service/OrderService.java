@@ -1,6 +1,7 @@
 package jpabook.shop.service;
 
 import jpabook.shop.api.dto.OrderResponseDto;
+import jpabook.shop.api.dto.OrderSimpleResponseDto;
 import jpabook.shop.repository.OrderRepository;
 import jpabook.shop.repository.dto.OrderSimpleQueryDto;
 import org.springframework.stereotype.Service;
@@ -18,24 +19,35 @@ public class OrderService {
 		this.orderRepository = orderRepository;
 	}
 
+	// findAllSimple -> for OrderSimpleApiController
 	@Transactional(readOnly = true)
-	public List<OrderResponseDto> findAllV2() {
+	public List<OrderSimpleResponseDto> findAllSimpleV2() {
 		return orderRepository.findAll().stream()
-			.map(OrderResponseDto::new)
+			.map(OrderSimpleResponseDto::new)
 			.collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)
-	public List<OrderResponseDto> findAllV3() {
+	public List<OrderSimpleResponseDto> findAllSimpleV3() {
 		// JPQL 사용
 		return orderRepository.findAllWithMemberDelivery().stream()
-			.map(OrderResponseDto::new)
+			.map(OrderSimpleResponseDto::new)
 			.collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)
-	public List<OrderSimpleQueryDto> findAllV4() {
+	public List<OrderSimpleQueryDto> findAllSimpleV4() {
 		// Repository에서 Entity가 아니라 아예 전용 Dto 타입으로 결과를 가공함
 		return orderRepository.findAllToOrderDtos();
 	}
+
+	// findAll -> for OrderApiController
+	@Transactional(readOnly = true)
+	public List<OrderResponseDto> findAllV2() {
+		return orderRepository.findAll().stream()
+			.map(order -> new OrderResponseDto(order))
+			.collect(Collectors.toList());
+	}
+
+
 }
