@@ -20,6 +20,7 @@ dependencies {
 
     // TODO
     //implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mustache'
     //implementation group: 'org.springframework.boot', name: 'spring-boot-starter-devtools'
     implementation group: 'com.github.gavlyukovskiy', name:'p6spy-spring-boot-starter', version: '1.5.6'
 

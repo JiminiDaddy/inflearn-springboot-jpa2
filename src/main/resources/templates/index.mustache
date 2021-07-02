@@ -1,0 +1,54 @@
+{{>layout/header}}
+
+<!-- TODO API URI 변경 및 버튼 이벤트 처리-->
+
+<h1 class="col-md-3" style="text-align: center; padding: 10px 10px 10px 10px;">스프링부트 + JPA 2</h1>
+<div class="col-md-8">
+    <div class="col-md-8 text-center">
+        <form>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="title">회원 기능</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="/api/v3/orders" role="button" class="btn btn-success">회원 가입</a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/api/v3/orders" role="button" class="btn btn-success">회원 목록</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="title">상품 기능</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="/api/v3/orders" role="button" class="btn btn-secondary">상품 등록</a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/api/v3/orders" role="button" class="btn btn-secondary">상품 목록</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="title">주문 기능</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="/api/v3/orders" role="button" class="btn btn-primary">상품 주문</a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/api/v3/orders" role="button" class="btn btn-primary">주문 내역</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{>layout/footer}}
