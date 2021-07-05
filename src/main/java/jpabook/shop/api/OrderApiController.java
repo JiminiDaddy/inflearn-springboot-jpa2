@@ -4,6 +4,7 @@ import jpabook.shop.api.dto.OrderResponseDto;
 import jpabook.shop.service.OrderService;
 import lombok.Getter;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -26,6 +27,15 @@ public class OrderApiController {
 	@GetMapping("/api/v3/orders")
 	public ResultCode<OrderResponseDto> findOrdersV3() {
 		List<OrderResponseDto> orderResponseDtos = this.orderService.findAllV3();
+		ResultCode<OrderResponseDto> result = new ResultCode<>(orderResponseDtos, orderResponseDtos.size());
+		return result;
+	}
+
+	@GetMapping("/api/v3.1/orders")
+	public ResultCode<OrderResponseDto> findOrdersV3ForPaging(
+		@RequestParam(value = "offset", defaultValue = "0") int offset,
+		@RequestParam(value = "pageSize", defaultValue = "1") int pageSize) {
+		List<OrderResponseDto> orderResponseDtos = this.orderService.findAllV3ForPaging(offset, pageSize);
 		ResultCode<OrderResponseDto> result = new ResultCode<>(orderResponseDtos, orderResponseDtos.size());
 		return result;
 	}

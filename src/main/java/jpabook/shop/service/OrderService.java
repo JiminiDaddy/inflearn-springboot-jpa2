@@ -4,6 +4,7 @@ import jpabook.shop.api.dto.OrderResponseDto;
 import jpabook.shop.api.dto.OrderSimpleResponseDto;
 import jpabook.shop.repository.OrderRepository;
 import jpabook.shop.repository.dto.OrderSimpleQueryDto;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +52,16 @@ public class OrderService {
 
 	public List<OrderResponseDto> findAllV3() {
 		return orderRepository.findAllWithItem().stream()
+			.map(order -> new OrderResponseDto(order))
+			.collect(Collectors.toList());
+	}
+
+	@Transactional(readOnly = true)
+	public List<OrderResponseDto> findAllV3ForPaging(int offset, int pageSize) {
+		// JPQL 사용
+		System.out.println("offset: <" + offset + ">, pageSize: <" + pageSize + ">");
+		return orderRepository.findAllWithMemberDelivery(PageRequest.of(offset, pageSize)).stream()
+		//return orderRepository.findAllWithMemberDelivery(PageRequest.of(1, 20)).stream()
 			.map(order -> new OrderResponseDto(order))
 			.collect(Collectors.toList());
 	}
