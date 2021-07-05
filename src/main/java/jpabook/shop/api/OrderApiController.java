@@ -1,6 +1,7 @@
 package jpabook.shop.api;
 
 import jpabook.shop.api.dto.OrderResponseDto;
+import jpabook.shop.repository.dto.OrderQueryDto;
 import jpabook.shop.service.OrderService;
 import lombok.Getter;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,13 @@ public class OrderApiController {
 		@RequestParam(value = "pageSize", defaultValue = "1") int pageSize) {
 		List<OrderResponseDto> orderResponseDtos = this.orderService.findAllV3ForPaging(offset, pageSize);
 		ResultCode<OrderResponseDto> result = new ResultCode<>(orderResponseDtos, orderResponseDtos.size());
+		return result;
+	}
+
+	@GetMapping("/api/v4/orders")
+	public ResultCode<OrderQueryDto> findOrdersV4() {
+		List<OrderQueryDto> orders = orderService.findAllV4();
+		ResultCode<OrderQueryDto> result = new ResultCode<>(orders, orders.size());
 		return result;
 	}
 

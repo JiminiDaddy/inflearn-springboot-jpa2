@@ -1,6 +1,8 @@
 package jpabook.shop.repository;
 
 import jpabook.shop.domain.Order;
+import jpabook.shop.repository.dto.OrderItemQueryDto;
+import jpabook.shop.repository.dto.OrderQueryDto;
 import jpabook.shop.repository.dto.OrderSimpleQueryDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,7 +29,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 		" join o.member m" +
 		" join o.delivery d"
 	)
-	List<OrderSimpleQueryDto> findAllToOrderDtos();
+	List<OrderSimpleQueryDto> findAllToOrderSimpleQueryDtos();
 
 	// distinct 키워드를 통해서 중복된 Order가 제거된다.
 	// Order와 OrderItem이 Join됨에따라 Order가 OrderItem수에 매칭하기위해 Order가 중복적으로 추가되는 현상이 발생하는데, 이 현상을 제거시켜준다.
@@ -38,4 +40,18 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 		" join fetch oi.item i"
 	)
 	List<Order> findAllWithItem();
+
+	@Query("select new jpabook.shop.repository.dto.OrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address)"  +
+		" from Order o" +
+		" join o.member m" +
+		" join o.delivery d"
+	)
+	List<OrderQueryDto> findOrders();
+
+	@Query("select new jpabook.shop.repository.dto.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+		" from OrderItem oi" +
+		" join oi.item i" +
+		" where oi.order.id = :orderId"
+	)
+	List<OrderItemQueryDto> findOrderItems(Long orderId);
 }

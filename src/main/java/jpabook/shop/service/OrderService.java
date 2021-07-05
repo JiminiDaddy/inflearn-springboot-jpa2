@@ -3,6 +3,8 @@ package jpabook.shop.service;
 import jpabook.shop.api.dto.OrderResponseDto;
 import jpabook.shop.api.dto.OrderSimpleResponseDto;
 import jpabook.shop.repository.OrderRepository;
+import jpabook.shop.repository.dto.OrderItemQueryDto;
+import jpabook.shop.repository.dto.OrderQueryDto;
 import jpabook.shop.repository.dto.OrderSimpleQueryDto;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -39,7 +41,7 @@ public class OrderService {
 	@Transactional(readOnly = true)
 	public List<OrderSimpleQueryDto> findAllSimpleV4() {
 		// Repository에서 Entity가 아니라 아예 전용 Dto 타입으로 결과를 가공함
-		return orderRepository.findAllToOrderDtos();
+		return orderRepository.findAllToOrderSimpleQueryDtos();
 	}
 
 	// findAll -> for OrderApiController
@@ -63,6 +65,20 @@ public class OrderService {
 		return orderRepository.findAllWithMemberDelivery(PageRequest.of(offset, pageSize)).stream()
 		//return orderRepository.findAllWithMemberDelivery(PageRequest.of(1, 20)).stream()
 			.map(order -> new OrderResponseDto(order))
+			.collect(Collectors.toList());
+	}
+
+	@Transactional
+	public List<OrderQueryDto> findAllV4() {
+		// xToOne 연관관계의 데이터를 조회한다. (xToOne은 join으로 인한 row수 증가가 없다)
+		List<OrderQueryDto> orderQueryDtos = orderRepository.findOrders();
+		return orderQueryDtos.stream()
+			.peek(order -> {
+				// 각 order를 순회하면서, orderId에 해당하는 orderItems를 조회한다.
+				// toMany이므로 row수가 증가할 수 있다. 따라서 한번에 컬렉션까지 조회하지않고, toOne과 toMany를 분리하여 조회한다.
+				List<OrderItemQueryDto> orderItems = orderRepository.findOrderItems(order.getOrderId());
+				order.setOrderItems(orderItems);
+			})
 			.collect(Collectors.toList());
 	}
 }
