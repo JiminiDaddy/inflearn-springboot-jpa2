@@ -54,4 +54,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 		" where oi.order.id = :orderId"
 	)
 	List<OrderItemQueryDto> findOrderItems(Long orderId);
+
+	// 위와 동일한 OrderItems를 조회하지만 in절을 사용하므로 DB로 전송되는 SQL이 1번만 발생한다.
+	@Query("select new jpabook.shop.repository.dto.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+		" from OrderItem oi" +
+		" join oi.item i" +
+		" where oi.order.id in :orderIds"
+	)
+	List<OrderItemQueryDto> findOrderItems(List<Long> orderIds);
 }

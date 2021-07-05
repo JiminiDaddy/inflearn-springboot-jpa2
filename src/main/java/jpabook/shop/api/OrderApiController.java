@@ -48,6 +48,13 @@ public class OrderApiController {
 		return result;
 	}
 
+	@GetMapping("/api/v5/orders")
+	public ResultCode<OrderQueryDto> findOrdersV5() {
+		List<OrderQueryDto> orders = orderService.findAllV5();
+		ResultCode<OrderQueryDto> result = new ResultCode<>(orders, orders.size());
+		return result;
+	}
+
 	@Getter
 	private static class ResultCode<T> {
 		private int count;
