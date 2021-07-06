@@ -1,6 +1,7 @@
 package jpabook.shop.repository;
 
 import jpabook.shop.domain.Order;
+import jpabook.shop.repository.dto.OrderFlatQueryDto;
 import jpabook.shop.repository.dto.OrderItemQueryDto;
 import jpabook.shop.repository.dto.OrderQueryDto;
 import jpabook.shop.repository.dto.OrderSimpleQueryDto;
@@ -62,4 +63,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 		" where oi.order.id in :orderIds"
 	)
 	List<OrderItemQueryDto> findOrderItems(List<Long> orderIds);
+
+	@Query("select new jpabook.shop.repository.dto.OrderFlatQueryDto(" +
+		"o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
+		" from Order o" +
+		" join o.member m" +
+		" join o.delivery d" +
+		" join o.orderItems oi" +
+		" join oi.item i"
+	)
+	List<OrderFlatQueryDto> findAllOrderFlat();
 }

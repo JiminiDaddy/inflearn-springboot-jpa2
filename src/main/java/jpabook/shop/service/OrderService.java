@@ -3,6 +3,7 @@ package jpabook.shop.service;
 import jpabook.shop.api.dto.OrderResponseDto;
 import jpabook.shop.api.dto.OrderSimpleResponseDto;
 import jpabook.shop.repository.OrderRepository;
+import jpabook.shop.repository.dto.OrderFlatQueryDto;
 import jpabook.shop.repository.dto.OrderItemQueryDto;
 import jpabook.shop.repository.dto.OrderQueryDto;
 import jpabook.shop.repository.dto.OrderSimpleQueryDto;
@@ -12,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Transactional
 @Service
@@ -28,7 +30,7 @@ public class OrderService {
 	public List<OrderSimpleResponseDto> findAllSimpleV2() {
 		return orderRepository.findAll().stream()
 			.map(OrderSimpleResponseDto::new)
-			.collect(Collectors.toList());
+			.collect(toList());
 	}
 
 	@Transactional(readOnly = true)
@@ -36,7 +38,7 @@ public class OrderService {
 		// JPQL 사용
 		return orderRepository.findAllWithMemberDelivery().stream()
 			.map(OrderSimpleResponseDto::new)
-			.collect(Collectors.toList());
+			.collect(toList());
 	}
 
 	@Transactional(readOnly = true)
@@ -50,13 +52,13 @@ public class OrderService {
 	public List<OrderResponseDto> findAllV2() {
 		return orderRepository.findAll().stream()
 			.map(order -> new OrderResponseDto(order))
-			.collect(Collectors.toList());
+			.collect(toList());
 	}
 
 	public List<OrderResponseDto> findAllV3() {
 		return orderRepository.findAllWithItem().stream()
 			.map(order -> new OrderResponseDto(order))
-			.collect(Collectors.toList());
+			.collect(toList());
 	}
 
 	@Transactional(readOnly = true)
@@ -66,7 +68,7 @@ public class OrderService {
 		return orderRepository.findAllWithMemberDelivery(PageRequest.of(offset, pageSize)).stream()
 		//return orderRepository.findAllWithMemberDelivery(PageRequest.of(1, 20)).stream()
 			.map(order -> new OrderResponseDto(order))
-			.collect(Collectors.toList());
+			.collect(toList());
 	}
 
 	@Transactional
@@ -81,19 +83,36 @@ public class OrderService {
 				List<OrderItemQueryDto> orderItems = orderRepository.findOrderItems(order.getOrderId());
 				order.setOrderItems(orderItems);
 			})
-			.collect(Collectors.toList());
+			.collect(toList());
 	}
 
 	public List<OrderQueryDto> findAllV5() {
 		// 1. 모든 Order 데이터를 조회한다.
 		List<OrderQueryDto> orders = orderRepository.findOrders();
 		// 2. 조회한 Orders로부터 Id만을 추출하여 List로 만든다.
-		List<Long> orderIds = orders.stream().map(order -> order.getOrderId()).collect(Collectors.toList());
+		List<Long> orderIds = orders.stream().map(order -> order.getOrderId()).collect(toList());
 		// 3. 추출한 OrderIds로부터 OrderItems를 조회한다. orderIds은 컬렉션으로, where in절을 통해 한번에 SQL을 전송할 수 있다.
-		Map<Long, List<OrderItemQueryDto>> orderItemMap = orderRepository.findOrderItems(orderIds).stream().collect(Collectors.groupingBy(orderItem -> orderItem.getOrderId()));
+		Map<Long, List<OrderItemQueryDto>> orderItemMap = orderRepository.findOrderItems(orderIds).stream().collect(groupingBy(orderItem -> orderItem.getOrderId()));
 		// 4. Orders를 순회하면서 OrderId에 해당하는 OrderItems를 설정해준다.
 		orders.forEach(order -> order.setOrderItems(orderItemMap.get(order.getOrderId())));
 		// 따라서 Order를 조회하는 SQL 1번, OrderItems를 조회 1번, 총 2번 SQL을 전송한다. (v4의 N+1문제가 해결됨)
 		return orders;
+	}
+
+	public List<OrderQueryDto> findAllV6() {
+		List<OrderFlatQueryDto> flats = orderRepository.findAllOrderFlat();
+		// OrderFlatQueryDto -> OrderQueryDto로 변환하여 반환한다.
+
+		return flats.stream()
+			// groupby로 묶는다. OrderQueryDto는 orderId로 구분짓도록 구성하였으므로, Flat의 결과에서 orderId가 같은것끼리 묶인다.
+			// collect를 통해 Map형태를 구성한다. key는 OrderQueryDto가 된다.
+			.collect(groupingBy(o -> new OrderQueryDto(
+					o.getOrderId(), o.getMemberName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+				// FlatDto -> OrderItemDto로 변환한다.
+				// OrderItemQueryDto는 value가 된다.
+				mapping(o -> new OrderItemQueryDto(o.getOrderId(), o.getItemName(), o.getOrderPrice(), o.getCount()), toList())
+			)).entrySet().stream()
+			.map(e -> new OrderQueryDto(e.getKey().getOrderId(), e.getKey().getMemberName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(), e.getValue()))
+			.collect(toList());
 	}
 }

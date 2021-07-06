@@ -2,12 +2,16 @@ package jpabook.shop.repository.dto;
 
 import jpabook.shop.domain.Address;
 import jpabook.shop.domain.OrderStatus;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@EqualsAndHashCode(of = "orderId")		// groupby로 묶어줄 기준으로 orderId를 사용했으며, orderId로 객체들이 구분되야하므로 Eqauls,HashCode를 재정의한다.
+@AllArgsConstructor
 @Setter
 @Getter
 public class OrderQueryDto {
