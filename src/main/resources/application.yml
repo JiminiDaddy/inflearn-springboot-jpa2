@@ -17,6 +17,8 @@ spring:
         #show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
+    # default=true
+    open-in-view: false
 
   h2:
     console:
